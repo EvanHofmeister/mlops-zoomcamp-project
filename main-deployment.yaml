@@ -1,0 +1,48 @@
+###
+### A complete description of a Prefect Deployment for flow 'main'
+###
+name: Example_flow
+description: null
+version: 41709b415acdcab34c121abebc852bd2
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+work_pool_name: default-agent-pool
+tags: []
+parameters: {}
+schedule: null
+is_schedule_active: true
+infra_overrides: {}
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: main
+manifest_path: null
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  _block_document_id: 4044384c-fdff-42bb-8589-905a538ab377
+  _block_document_name: anonymous-8d90b24d-d1c8-430f-80b5-d952fbbc2d51
+  _is_anonymous: true
+  block_type_slug: process
+  _block_type_slug: process
+storage: null
+path: /Users/evanhofmeister/PycharmProjects/mlops-zoomcamp-project
+entrypoint: prefect/main_flow.py:main
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    log_prints:
+      title: log_prints
+      default: true
+      position: 0
+  required: null
+  definitions: null
+timestamp: '2023-08-21T19:52:55.470630+00:00'
+triggers: []
