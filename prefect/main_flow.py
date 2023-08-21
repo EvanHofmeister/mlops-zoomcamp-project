@@ -106,7 +106,7 @@ def model_tuning(X, y, categorical_features_indices, log_prints=True):
                 "bootstrap_type": trial.suggest_categorical(
                     "bootstrap_type", ["Bayesian", "Bernoulli", "MVS"]
                 ),
-                "used_ram_limit": "3gb",
+                "used_ram_limit": "5gb",
             }
             mlflow.set_tag("model", "catboost")
             mlflow.set_tag("stage", "model_tuning")
@@ -126,9 +126,8 @@ def model_tuning(X, y, categorical_features_indices, log_prints=True):
             mlflow.catboost.log_model(cat_cls, artifact_path="preprocessor")
             print(f"default artifacts URI: '{mlflow.get_artifact_uri()}'")
 
-            preds = cat_cls.predict(X_test)
-            pred_labels = np.array(preds, dtype=int)
-            #pred_labels = np.rint(preds)
+            pred = cat_cls.predict(X_test)
+            pred_labels = np.array(pred, dtype=int)
             accuracy = round(accuracy_score(y_test, pred_labels), 4)
             mlflow.log_metric("accuracy", accuracy)
             return accuracy
@@ -163,20 +162,12 @@ def final_model(X, y, categorical_features_indices, params, log_prints=True):
         cat_cls.fit(X_train, y_train, eval_set=[(X_test, y_test)], cat_features=categorical_features_indices, verbose=0,
                     early_stopping_rounds=100)
 
-        preds = cat_cls.predict(X_test)
+        pred = cat_cls.predict(X_test)
 
-        #pred_labels = np.rint(preds)
-        #preds = preds[~np.isnan(preds)]
-        #pd.DataFrame(preds).to_csv('/Users/evanhofmeister/PycharmProjects/mlops-zoomcamp-project/prefect/data/preds.csv')
-        #preds = pd.DataFrame(preds).dropna()
-        pred_labels = np.array(preds, dtype=int)
+        pred_labels = np.array(pred, dtype=int)
         accuracy = round(accuracy_score(y_test, pred_labels), 4)
         mlflow.log_metric("accuracy", accuracy)
 
-        # with open("models/preprocessor.b", "wb") as f_out:
-        #     pickle.dump(cat_cls, f_out)
-
-        # mlflow.log_artifact("models/preprocessor.b", artifact_path="preprocessor")
         mlflow.log_artifact("prefect/models", artifact_path="preprocessor")
         mlflow.catboost.log_model(cat_cls, artifact_path="models")
         print(f"default artifacts URI: '{mlflow.get_artifact_uri()}'")

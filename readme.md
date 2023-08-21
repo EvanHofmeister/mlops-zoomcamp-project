@@ -58,7 +58,7 @@ Satisfaction: Airline satisfaction level(Satisfaction, neutral or dissatisfactio
 
 ## Data Pipeline
 
-Note, due to time contraints, I was not able to implement Docker/EvidentlyAI, CI/CD, and a few other elements I had originally intended to build.
+Note, due to time constraints, I was not able to implement Docker/EvidentlyAI, CI/CD, and a few other elements I had originally intended to build.
 
 ![Pipeline](images/mlops_final.png)
 
@@ -82,17 +82,12 @@ The main difference between Prefect and Airflow is their approach to workflow ex
 
 Amazon Web Services (AWS) is a comprehensive cloud computing platform offered by Amazon. It provides a wide range of services that enable individuals, businesses, and organizations to build and manage various applications and services without the need for physical hardware. Some of the most popular AWS tools and services include:
 
-Amazon EC2 (Elastic Compute Cloud): Virtual servers in the cloud, allowing users to scale computing resources up or down as needed.
-
-Amazon S3 (Simple Storage Service): Scalable storage solution for storing and retrieving data, suitable for various applications like backups, static website hosting, and data archiving.
-
-Amazon RDS (Relational Database Service): Managed database service supporting various database engines like MySQL, PostgreSQL, SQL Server, and more.
-
-AWS Lambda: Serverless compute service that lets you run code in response to events without provisioning or managing servers.
-
-Amazon Sagemaker: Fully managed service for building, training, and deploying machine learning models.
-
-Amazon Redshift: Data warehousing service for running complex queries and analytics on large datasets.
+* Amazon EC2 (Elastic Compute Cloud): Virtual servers in the cloud, allowing users to scale computing resources up or down as needed.
+* Amazon S3 (Simple Storage Service): Scalable storage solution for storing and retrieving data, suitable for various applications like backups, static website hosting, and data archiving.
+* Amazon RDS (Relational Database Service): Managed database service supporting various database engines like MySQL, PostgreSQL, SQL Server, and more.
+* AWS Lambda: Serverless compute service that lets you run code in response to events without provisioning or managing servers.
+* Amazon Sagemaker: Fully managed service for building, training, and deploying machine learning models.
+* Amazon Redshift: Data warehousing service for running complex queries and analytics on large datasets.
 
 These are just a few examples of the extensive range of services offered by AWS. For this project, we will only be utilizing EC2 and S3 services.
 
@@ -106,6 +101,8 @@ EvidentlyAI is a platform designed to enhance the development and deployment of 
 
 ## Project setup
 
+Either follow the detail instructions below, or modify the makefile with the appropriate directory and run the available commands. Note, these instructions provide amble detail to run the project locally, but may not be detailed enough to run the code entirely on AWS/as intended. 
+
 ### Requirements 
 *  [Docker](https://www.docker.com/)
 *  [Terraform](https://www.terraform.io/)
@@ -116,7 +113,7 @@ EvidentlyAI is a platform designed to enhance the development and deployment of 
 
 ### Setup Enviornment
 
-Create a virtual environment
+Create a virtual environment using conda
 
 `conda create --name py35 python=3.10`
 
@@ -124,20 +121,21 @@ Install libraries
 
 `pip install -r ~/mlops-zoomcamp-project/requirements.txt`
 
-
 ### API Keys
 
 The data is available in the `~\data directory`, but you can also source it by creating a Kaggle account and downloading your credentials in a Json format for use with the Kaggle python library.
 
 ### Setup AWS
 
-`ssh-keygen -t rsa -b 4096`
-
+Create public and private key for use with EC2:
 `ssh-keygen -f <Local directory to store private keys>/mlops_key_pair2 -t rsa -b 4096`
 
+To run the jupyter notebook or another instance on the EC2, you can connect through the public ip address, available on the AWS dashboard:
 `ssh -i <Location of private key on local machine> -L localhost:8888:localhost:8888 ubuntu@<EC2 IP Address>`
 
 ### Setup Terraform
+
+Set directory, initialize, plan, and apply terraform:
 
 `cd ~/mlops-zoomcamp-project/terraform`
 
@@ -150,6 +148,12 @@ The data is available in the `~\data directory`, but you can also source it by c
 
 ### Setup Prefect
 
+To run locally, start prefect server:
+
+`prefect server start`
+
+Set directory, build, apply, and launch prefect agent:
+
 `cd ~/mlops-zoomcamp-project`
 
 `conda activate prefect-env`
@@ -160,9 +164,19 @@ The data is available in the `~\data directory`, but you can also source it by c
 
 `prefect agent start -q 'default'`
 
+To run on an EC2 instance, follow the additional instructions below:
+
+`prefect config set PREFECT_API_URL=<EC2 Instance Public IP>`
+
 ### MLFlow
 
+To run locally:
+
 `mlflow ui --host localhost:5000 --backend-store-uri sqlite:///mlflow.db`
+
+To run on an EC2 instance:
+
+`mlflow server -h 0.0.0.0 -p 5000 --backend-store-uri postgresql://mlflow:mlflowadmin@...../mlflow_db --default-artifact-root s3://mflow-remote`
 
 ### Result 
 
@@ -171,3 +185,7 @@ After setting up the infrastructure and running prefect, you should see the fina
 ![MLFlow](images/MLFlow1.png)
 
 ![MLFlow](images/MLFlow_Final_Model.png)
+
+### MLFlow
+
+Note the same setup detailed in the above instructions has been provided in the `Makefile` as well
