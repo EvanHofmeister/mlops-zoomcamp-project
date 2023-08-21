@@ -6,55 +6,38 @@ Project to create pipeline to apply MLOps technologies covered in Data Talks Clu
 This project attempts to create a MLOps pipeline to predict airline customer satisfaction using a handful of available metrics that are tracked by the airline. This pipeline utilizes enviornment creation (Docker), infrastructure as code (IaC) (Terraform), workflow orchestration (Prefect), Cloud (AWS), Experement tracking tools (MLFlow), and Monitoring (Evidently). After EDA and general model comparison performed in `flight-satisfaction-prediction-scratch.ipynb`, CatBoost model is selected for use in pipeline and further hyperperameter tuning.
 
 ## Data 
-The dataset can be sourced from [Kaggle](https://www.kaggle.com/datasets/teejmahal20/airline-passenger-satisfaction)
+* The dataset can be sourced from [Kaggle](https://www.kaggle.com/datasets/teejmahal20/airline-passenger-satisfaction)
+* This dataset contains an airline passenger satisfaction survey.
+* Gender: Gender of the passengers (Female, Male)
+* Customer Type: The customer type (Loyal customer, disloyal customer)
+* Age: The actual age of the passengers
+* Type of Travel: Purpose of the flight of the passengers (Personal Travel, Business Travel)
+* Class: Travel class in the plane of the passengers (Business, Eco, Eco Plus)
+* Flight distance: The flight distance of this journey
+* Inflight wifi service: Satisfaction level of the inflight wifi service (0:Not Applicable;1-5)
+* Departure/Arrival time convenient: Satisfaction level of Departure/Arrival time convenient
+* Ease of Online booking: Satisfaction level of online booking
+* Gate location: Satisfaction level of Gate location
+* Food and drink: Satisfaction level of Food and drink
+* Online boarding: Satisfaction level of online boarding
+* Seat comfort: Satisfaction level of Seat comfort
+* Inflight entertainment: Satisfaction level of inflight entertainment
+* On-board service: Satisfaction level of On-board service
+* Leg room service: Satisfaction level of Leg room service
+* Baggage handling: Satisfaction level of baggage handling
+* Check-in service: Satisfaction level of Check-in service
+* Inflight service: Satisfaction level of inflight service
+* Cleanliness: Satisfaction level of Cleanliness
+* Departure Delay in Minutes: Minutes delayed when departure
+* Arrival Delay in Minutes: Minutes delayed when Arrival
+* Satisfaction: Airline satisfaction level(Satisfaction, neutral or dissatisfaction)
 
-This dataset contains an airline passenger satisfaction survey.
+## Chosen model
 
-Gender: Gender of the passengers (Female, Male)
+From EDA and a rough comparision of canned Sklearn models, I've chosen to implement a Catboost model in the final data pipeline. The model is further optimized using optuna to find the hyperperameters that yield the best accuracy score. This process is tracked within MLFlow.
 
-Customer Type: The customer type (Loyal customer, disloyal customer)
-
-Age: The actual age of the passengers
-
-Type of Travel: Purpose of the flight of the passengers (Personal Travel, Business Travel)
-
-Class: Travel class in the plane of the passengers (Business, Eco, Eco Plus)
-
-Flight distance: The flight distance of this journey
-
-Inflight wifi service: Satisfaction level of the inflight wifi service (0:Not Applicable;1-5)
-
-Departure/Arrival time convenient: Satisfaction level of Departure/Arrival time convenient
-
-Ease of Online booking: Satisfaction level of online booking
-
-Gate location: Satisfaction level of Gate location
-
-Food and drink: Satisfaction level of Food and drink
-
-Online boarding: Satisfaction level of online boarding
-
-Seat comfort: Satisfaction level of Seat comfort
-
-Inflight entertainment: Satisfaction level of inflight entertainment
-
-On-board service: Satisfaction level of On-board service
-
-Leg room service: Satisfaction level of Leg room service
-
-Baggage handling: Satisfaction level of baggage handling
-
-Check-in service: Satisfaction level of Check-in service
-
-Inflight service: Satisfaction level of inflight service
-
-Cleanliness: Satisfaction level of Cleanliness
-
-Departure Delay in Minutes: Minutes delayed when departure
-
-Arrival Delay in Minutes: Minutes delayed when Arrival
-
-Satisfaction: Airline satisfaction level(Satisfaction, neutral or dissatisfaction)
+Overview of Catboost:
+CatBoost is a powerful open-source gradient boosting library designed for machine learning tasks, particularly in the realm of tabular data. Developed by Yandex, CatBoost stands out for its efficiency in handling categorical features without the need for explicit preprocessing, making it highly user-friendly. By utilizing techniques like ordered boosting and oblivious trees, CatBoost optimizes the training process and exhibits excellent predictive accuracy. It supports both classification and regression tasks, while also offering robustness against overfitting. 
 
 ## Data Pipeline
 
@@ -125,6 +108,9 @@ Install libraries
 
 The data is available in the `~\data directory`, but you can also source it by creating a Kaggle account and downloading your credentials in a Json format for use with the Kaggle python library.
 
+### Jupyter Notebook
+
+At this point, feel free to play around with the jupyter notebook I provided (`flight-satisfaction-prediction.ipynb`). There's a comparison of several Sklearn classification models and EDA of the data. 
 ### Setup AWS
 
 Create public and private key for use with EC2:
@@ -181,7 +167,11 @@ To run on an EC2 instance:
 ### Result 
 
 After setting up the infrastructure and running prefect, you should see the final optimized CatBoost model in MLFlow:
+Below we can see:
+* All the Catboost models optimized with Optuna
+* The final model, with hyperperameters that yield the highest accuracy score of .989
 
+Below we can see an accuracy score of .989
 ![MLFlow](images/MLFlow1.png)
 
 ![MLFlow](images/MLFlow_Final_Model.png)
